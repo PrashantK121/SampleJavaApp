@@ -24,6 +24,7 @@ jobs:
 
     # Step 3: Build the Java project
     - name: Build Java Project
+      working-directory: ./HelloWorld
       run: mvn clean package -DskipTests # Adjust for Gradle if needed
 
     # Step 4: Log in to Docker Hub
