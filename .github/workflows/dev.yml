@@ -37,7 +37,7 @@ jobs:
     # Step 5: Build the Docker image
     - name: Build Docker Image
       working-directory: ./HelloWorld
-      run: docker build -t ${{ secrets.DOCKER_USERNAME }}/my-java-app:latest .
+      run: sudo docker build -t ${{ secrets.DOCKER_USERNAME }}/my-java-app:latest .
 
     # Step 6: Push the Docker image to Docker Hub
     - name: Push Docker Image
