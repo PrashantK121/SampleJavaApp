@@ -16,14 +16,15 @@ jobs:
       uses: actions/checkout@v3
 
     # Step 2: Set up Java (if necessary for Maven build)
-    - name: Set up JDK 17
-      uses: actions/setup-java@v3
-      with:
-        java-version: '17'
-        distribution: 'temurin'
+    # - name: Set up JDK 17
+    #   uses: actions/setup-java@v3
+    #   with:
+    #     java-version: '17'
+    #     distribution: 'temurin'
 
     # Step 3: Build the Java project
     - name: Build Java Project
+      working-directory: ./HelloWorld
       run: mvn clean package -DskipTests # Adjust for Gradle if needed
 
     # Step 4: Log in to Docker Hub
@@ -35,6 +36,7 @@ jobs:
 
     # Step 5: Build the Docker image
     - name: Build Docker Image
+      working-directory: ./HelloWorld
       run: docker build -t ${{ secrets.DOCKER_USERNAME }}/my-java-app:latest .
 
     # Step 6: Push the Docker image to Docker Hub
