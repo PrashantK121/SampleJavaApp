@@ -16,9 +16,6 @@ jobs:
     # Step 1: Checkout the repository
     - name: Checkout code
       uses: actions/checkout@v3
-      # with:
-      #   repository: PrashantK121/SampleJavaApp
-      #   token: ${{ secrets.GIT_ACCESS_TOKEN }}
 
 
     # Step 2: Build the Java project
