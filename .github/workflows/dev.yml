@@ -33,7 +33,21 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
 
-    # Step 4: Build and push the Docker image
+    # Step 4: Check if the Docker image already exists
+    - name: Check Docker Image
+      run: |
+        #
+          echo "Checking if Docker image already exists ......"
+          export BUILD_VERSION=$(cat app_build_version.txt)
+          if docker manifest inspect ${{ secrets.DOCKER_USERNAME }}/helloworld:$BUILD_VERSION > /dev/null 2>&1; then
+            echo "Docker image with version $BUILD_VERSION already exists. Failing the build."
+            exit 1
+          else
+            echo "Docker image with version $BUILD_VERSION does not exist. Proceeding with build."
+          fi
+        #
+
+    # Step 5: Build and push the Docker image
     - name: Build and Push Docker Image
       run: |
         #
@@ -44,4 +58,20 @@ jobs:
           sudo docker build -t ${{ secrets.DOCKER_USERNAME }}/helloworld:$BUILD_VERSION .
           docker push ${{ secrets.DOCKER_USERNAME }}/helloworld:$BUILD_VERSION
         #
-    
+
+    # Step 6: Delete the Docker image from the runner
+    - name: Delete Docker Image
+      run: |
+        #
+          echo "Deleting Docker image from runner ......"
+          docker rmi ${{ secrets.DOCKER_USERNAME }}/helloworld:$BUILD_VERSION
+        #
+
+    # Step 7: Clean up repository code from the runner
+    - name: Clean up repository code
+      run: |
+        #
+          echo "Cleaning up repository code from runner ......"
+          cd ..
+          rm -rf HelloWorld
+        #
