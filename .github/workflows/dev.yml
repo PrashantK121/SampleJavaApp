@@ -20,14 +20,13 @@ jobs:
         repository: PrashantK121/SampleJavaApp
         token: ${{ secrets.GIT_ACCESS_TOKEN }}
 
-    # Step 2: Build the Java project
+    # Step 2: Setting build version
     - name: Setting build version
       shell: bash
       run: |
         #
         export BUILD_VERSION=$(cat app_build_version.txt)
         echo "app build version : $BUILD_VERSION"
-        echo "##[set-output name=BUILD_VERSION;]$BUILD_VERSION"
         #
 
     # Step 2: Build the Java project
@@ -50,8 +49,8 @@ jobs:
     # Step 4: Build the Docker image
     - name: Build Docker Image
       working-directory: ./HelloWorld
-      run: sudo docker build -t ${{ secrets.DOCKER_USERNAME }}/helloworld:$BUILD_VERSION .
+      run: sudo docker build -t ${{ secrets.DOCKER_USERNAME }}/my-java-app:$BUILD_VERSION .
 
     # Step 5: Push the Docker image to Docker Hub
     - name: Push Docker Image
-      run: docker push ${{ secrets.DOCKER_USERNAME }}/helloworld:$BUILD_VERSION
+      run: docker push ${{ secrets.DOCKER_USERNAME }}/my-java-app:$BUILD_VERSION
