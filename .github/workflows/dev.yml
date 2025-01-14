@@ -15,25 +15,7 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
-
-    # Step 2: Build the Java project
-    - name: Build Java Project
-      working-directory: ./HelloWorld
-      run: |
-          # 
-           echo "Building jar ......"
-           mvn clean install -DskipTests # Adjust for Gradle if needed
-           echo "Jar build completed"
-          #
-
-    # Step 3: Log in to Docker Hub
-    - name: Log in to Docker Hub
-      uses: docker/login-action@v2
-      with:
-        username: ${{ secrets.DOCKER_USERNAME }}
-        password: ${{ secrets.DOCKER_PASSWORD }}
-
-    # Step 4: Check if the Docker image already exists
+    # Step 2: Check if the Docker image already exists
     - name: Check Docker Image
       run: |
         #
@@ -47,6 +29,23 @@ jobs:
           fi
         #
 
+    # Step 3: Build the Java project
+    - name: Build Java Project
+      working-directory: ./HelloWorld
+      run: |
+          # 
+           echo "Building jar ......"
+           mvn clean install -DskipTests # Adjust for Gradle if needed
+           echo "Jar build completed"
+          #
+
+    # Step 4: Log in to Docker Hub
+    - name: Log in to Docker Hub
+      uses: docker/login-action@v2
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+
     # Step 5: Build and push the Docker image
     - name: Build and Push Docker Image
       run: |
@@ -55,7 +54,7 @@ jobs:
           export BUILD_VERSION=$(cat app_build_version.txt)
           echo "Docker build version : $BUILD_VERSION"
           cd HelloWorld
-          sudo docker build -t ${{ secrets.DOCKER_USERNAME }}/helloworld:$BUILD_VERSION .
+          sudo docker build -t ${{ secrets.DOCKER_USERNAME }}/helloworld:$BUILD_VERSION . 
           docker push ${{ secrets.DOCKER_USERNAME }}/helloworld:$BUILD_VERSION
         #
 
@@ -64,7 +63,6 @@ jobs:
       run: |
         #
           echo "Deleting Docker image from runner ......"
-          pwd
           export BUILD_VERSION=$(cat app_build_version.txt)
           echo "Docker build version : $BUILD_VERSION"
           docker rmi ${{ secrets.DOCKER_USERNAME }}/helloworld:$BUILD_VERSION
