@@ -65,6 +65,8 @@ jobs:
         #
           echo "Deleting Docker image from runner ......"
           pwd
+          export BUILD_VERSION=$(cat app_build_version.txt)
+          echo "Docker build version : $BUILD_VERSION"
           docker rmi ${{ secrets.DOCKER_USERNAME }}/helloworld:$BUILD_VERSION
         #
 
@@ -74,7 +76,7 @@ jobs:
         #
           echo "Cleaning up repository code from runner ......"
           pwd
-          cd ..
+          cd ../..
           pwd
-          rm -rf HelloWorld
+          rm -rf SampleJavaApp
         #
