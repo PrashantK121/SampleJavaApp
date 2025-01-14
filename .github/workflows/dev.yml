@@ -56,7 +56,7 @@ jobs:
           echo "Docker build version : $BUILD_VERSION"
           cd HelloWorld
           sudo docker build -t ${{ secrets.DOCKER_USERNAME }}/helloworld:$BUILD_VERSION .
-          docker push ${{ secrets.DOCKER_USERNAME }}/helloworld:$BUILD_VERSION
+          #docker push ${{ secrets.DOCKER_USERNAME }}/helloworld:$BUILD_VERSION
         #
 
     # Step 6: Delete the Docker image from the runner
@@ -64,6 +64,7 @@ jobs:
       run: |
         #
           echo "Deleting Docker image from runner ......"
+          pwd
           docker rmi ${{ secrets.DOCKER_USERNAME }}/helloworld:$BUILD_VERSION
         #
 
@@ -72,6 +73,8 @@ jobs:
       run: |
         #
           echo "Cleaning up repository code from runner ......"
+          pwd
           cd ..
+          pwd
           rm -rf HelloWorld
         #
