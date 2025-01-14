@@ -78,5 +78,5 @@ jobs:
           pwd
           cd ../..
           pwd
-          rm -rf SampleJavaApp
+          #rm -rf SampleJavaApp
         #
