@@ -56,7 +56,7 @@ jobs:
           echo "Docker build version : $BUILD_VERSION"
           cd HelloWorld
           sudo docker build -t ${{ secrets.DOCKER_USERNAME }}/helloworld:$BUILD_VERSION .
-          #docker push ${{ secrets.DOCKER_USERNAME }}/helloworld:$BUILD_VERSION
+          docker push ${{ secrets.DOCKER_USERNAME }}/helloworld:$BUILD_VERSION
         #
 
     # Step 6: Delete the Docker image from the runner
@@ -70,13 +70,3 @@ jobs:
           docker rmi ${{ secrets.DOCKER_USERNAME }}/helloworld:$BUILD_VERSION
         #
 
-    # Step 7: Clean up repository code from the runner
-    - name: Clean up repository code
-      run: |
-        #
-          echo "Cleaning up repository code from runner ......"
-          pwd
-          cd ../..
-          pwd
-          #rm -rf SampleJavaApp
-        #
