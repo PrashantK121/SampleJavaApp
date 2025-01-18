@@ -1,0 +1,99 @@
+name: Build and Push Docker Images
+
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: "Branch to build from"
+        required: true
+        type: choice
+        options: # Replace with your available branches
+          - main
+          - develop
+          - feature
+      app1:
+        description: "Build App1"
+        required: false
+        type: boolean
+      app2:
+        description: "Build App2"
+        required: false
+        type: boolean
+      app3:
+        description: "Build App3"
+        required: false
+        type: boolean
+      app4:
+        description: "Build App4"
+        required: false
+        type: boolean
+      app5:
+        description: "Build App5"
+        required: false
+        type: boolean
+      app6:
+        description: "Build App6"
+        required: false
+        type: boolean
+      app7:
+        description: "Build App7"
+        required: false
+        type: boolean
+      app8:
+        description: "Build App8"
+        required: false
+        type: boolean
+      app9:
+        description: "Build App9"
+        required: false
+        type: boolean
+      app10:
+        description: "Build App10"
+        required: false
+        type: boolean
+      app11:
+        description: "Build App11"
+        required: false
+        type: boolean
+      app12:
+        description: "Build App12"
+        required: false
+        type: boolean
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        app: ${{ toJson([ 'App1', 'App2', 'App3', 'App4', 'App5', 'App6', 'App7', 'App8', 'App9', 'App10', 'App11', 'App12' ]) }}
+    if: |
+      matrix.app == 'App1' && github.event.inputs.app1 == 'true' ||
+      matrix.app == 'App2' && github.event.inputs.app2 == 'true' ||
+      matrix.app == 'App3' && github.event.inputs.app3 == 'true' ||
+      matrix.app == 'App4' && github.event.inputs.app4 == 'true' ||
+      matrix.app == 'App5' && github.event.inputs.app5 == 'true' ||
+      matrix.app == 'App6' && github.event.inputs.app6 == 'true' ||
+      matrix.app == 'App7' && github.event.inputs.app7 == 'true' ||
+      matrix.app == 'App8' && github.event.inputs.app8 == 'true' ||
+      matrix.app == 'App9' && github.event.inputs.app9 == 'true' ||
+      matrix.app == 'App10' && github.event.inputs.app10 == 'true' ||
+      matrix.app == 'App11' && github.event.inputs.app11 == 'true' ||
+      matrix.app == 'App12' && github.event.inputs.app12 == 'true'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.inputs.branch }}
+
+      - name: Build Docker image
+        run: |
+          echo "Building Docker image for ${{ matrix.app }}"
+          cd ${{ matrix.app }}
+
+          docker build -t "ghcr.io/${{ github.repository }}/${{ matrix.app }}:${{ github.event.inputs.branch }}" .
+
+      - name: Push Docker image
+        run: |
+          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+          docker push "ghcr.io/${{ github.repository }}/${{ matrix.app }}:${{ github.event.inputs.branch }}"
