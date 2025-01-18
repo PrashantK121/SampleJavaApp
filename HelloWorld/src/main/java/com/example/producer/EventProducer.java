@@ -29,5 +29,6 @@ public class EventProducer {
 		headers.add(new RecordHeader("headerKey", "headerValue".getBytes()));
 		ProducerRecord<Integer, String> msgData = new ProducerRecord<Integer, String>(topicTest, null, 1, msg, headers);
 		kafkaTemplate.send(msgData);
+		System.out.println("Message sent successfully!");
 	}
 }
