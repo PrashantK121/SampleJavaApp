@@ -4,10 +4,12 @@ import java.util.Collections;
 
 import org.springframework.batch.item.data.RepositoryItemReader;
 import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Component;
 
 import com.example.entity.User;
 import com.example.repository.UserRepository;
 
+@Component
 public class UserItemReader extends RepositoryItemReader<User> {
 
     public UserItemReader(UserRepository userRepository) {
