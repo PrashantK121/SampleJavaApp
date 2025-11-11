@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: helloworld
+spec:
+  # replicas: 1
+  selector:
+    matchLabels:
+      app: helloworld
+  template:
+    metadata:
+      labels:
+        app: helloworld
+    spec:
+      containers:
+      - name: helloworld
+        image: prashantkushwaha121/my-java-app:10
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: PROFILE
+          value: "dev" # Set the desired profile here
+        ports:
+        - containerPort: 8098

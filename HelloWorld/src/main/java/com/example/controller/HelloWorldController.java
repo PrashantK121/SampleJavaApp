@@ -15,8 +15,9 @@ public class HelloWorldController {
 	@Autowired
 	EventProducer eventProducer;
 	
-	@GetMapping("")
+	@GetMapping("/home")
 	public ResponseEntity<String> home(){
+		System.out.println("Home!");
 		return ResponseEntity.ok("Home!");
 		
 	}

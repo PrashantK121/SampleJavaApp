@@ -1,0 +1,10 @@
+akhq:
+  image:
+    repository: tchiotludo/akhq
+    tag: latest
+  configuration:
+    akhq:
+      connections:
+        kafka-cluster:
+          properties:
+            bootstrap.servers: "kafka:9092"

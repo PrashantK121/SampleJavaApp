@@ -5,6 +5,8 @@ import org.springframework.batch.item.ItemWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import com.example.entity.User;
 import com.example.producer.EventProducer;
@@ -20,17 +22,23 @@ public class UserItemWriter implements ItemWriter<User> {
 
 	@Autowired
 	UserRepository userRepository;
+
+	@Autowired
+	TransactionTemplate transactionTemplate;
 	
 	@Override
 	public void write(Chunk<? extends User> users) throws Exception {
-		List<User> userList = users.getItems().stream().map(user -> {
-			System.out.println("Entered for processing : "+user.getId());
-			eventProducer.sendKafkaMessage(user.getFirstName());
-			user.setFirstName(user.getFirstName().toUpperCase() + "1");
-			//user.setId(user.getId()+10);
-			return user;
-		}).collect(Collectors.toList());
-		userList.forEach(user->System.out.println(user.getFirstName()));
-		userRepository.saveAllAndFlush(userList);
+		transactionTemplate.execute(status -> {
+			List<User> userList = users.getItems().stream().map(user -> {
+				System.out.println("Entered for processing : " + user.getId());
+				//eventProducer.sendKafkaMessage(user.getFirstName());
+				user.setFirstName(user.getFirstName().toUpperCase() + "1");
+				//user.setId(user.getId() + 10);
+				return user;
+			}).collect(Collectors.toList());
+			userList.forEach(user -> System.out.println(user.getFirstName()));
+			userRepository.saveAllAndFlush(userList);
+			return null;
+		});
 	}
 }

@@ -19,7 +19,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.core.task.TaskExecutor;
-import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -32,69 +31,62 @@ import com.example.steps.writer.UserItemWriter;
 
 @Configuration
 @EnableBatchProcessing
-//@EnableTransactionManagement
+@EnableTransactionManagement
 public class BatchConfig {
-
 
 	@Autowired
 	UserRepository userRepository;
 	
-	 @Autowired
-     private DataSource dataSource;
+	@Autowired
+	private DataSource dataSource;
 
-     @Bean
-     //@Primary
-     public JpaTransactionManager transactionManager() {
-          final JpaTransactionManager tm = new JpaTransactionManager();
-          tm.setDataSource(dataSource);
-          return tm;
-     }
-     
-//   @Bean
-//   public PlatformTransactionManager transactionManager(DataSource dataSource) {
-//	   return new DataSourceTransactionManager(dataSource);
-//   }
+	@Bean
+	@Primary
+	public PlatformTransactionManager transactionManager() {
+		final JpaTransactionManager tm = new JpaTransactionManager();
+		tm.setDataSource(dataSource);
+		return tm;
+	}
 
-    @Bean
-    public Job jobSendMessage(JobRepository jobRepository, Step step) {
-        return new JobBuilder("jobSendMessage", jobRepository)
-                .incrementer(new RunIdIncrementer())
-                .start(step)
-                .build();
-    }
+	@Bean
+	public Job jobSendMessage(JobRepository jobRepository, Step step) {
+		return new JobBuilder("jobSendMessage", jobRepository)
+				.incrementer(new RunIdIncrementer())
+				.start(step)
+				.build();
+	}
 
-    @Bean
-    public Step step(JobRepository jobRepository, JpaTransactionManager transactionManager) {
-        return new StepBuilder("step", jobRepository)
-                .<User, User>chunk(10, transactionManager)
-                .reader(reader())
-                .processor(processor())
-                .writer(writer())
-                .taskExecutor(taskExecutor())
-                .build();
-    }
+	@Bean
+	public Step step(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
+		return new StepBuilder("step", jobRepository)
+				.<User, User>chunk(10, transactionManager)
+				.reader(reader())
+				.processor(processor())
+				.writer(writer())
+				.taskExecutor(taskExecutor())
+				.build();
+	}
 
-    
-    @Bean
-    @StepScope
-    public ItemReader<User> reader() {
-        return new UserItemReader(userRepository);
-    }
+	@Bean
+	@StepScope
+	public ItemReader<User> reader() {
+		return new UserItemReader(userRepository);
+	}
 
-    @Bean
-    public ItemProcessor<User, User> processor() {
-        return new UserItemProcessor();
-    }
+	@Bean
+	public ItemProcessor<User, User> processor() {
+		return new UserItemProcessor();
+	}
 
-    @Bean
-    public ItemWriter<User> writer() {
-        return new UserItemWriter();
-    }
+	@Bean
+	public ItemWriter<User> writer() {
+		return new UserItemWriter();
+	}
 
-    @Bean
-    public TaskExecutor taskExecutor() {
-        SimpleAsyncTaskExecutor asyncTaskExecutor = new SimpleAsyncTaskExecutor("spring_batch");
-        asyncTaskExecutor.setConcurrencyLimit(10);
-        return asyncTaskExecutor;
-    }
+	@Bean
+	public TaskExecutor taskExecutor() {
+		SimpleAsyncTaskExecutor asyncTaskExecutor = new SimpleAsyncTaskExecutor("spring_batch");
+		asyncTaskExecutor.setConcurrencyLimit(10);
+		return asyncTaskExecutor;
+	}
 }
